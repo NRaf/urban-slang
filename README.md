@@ -1,7 +1,7 @@
 # Urban Slang
 
 
-A (very) simple NodeJS application which allows loading and quick lookup of words.
+A (very) simple NodeJS app which allows loading and quick lookup of words.
 
 ## Usage
 
@@ -80,6 +80,13 @@ quick insertion.
 
 As an example, passing 'wa' with the above data with return the values
 'was', 'waste', 'war', 'wars', 'ward' and 'wards'.
+
+## Compatability
+
+Tested on Chrome version 48. Might not work on older browsers due to the usage
+of the Fetch API for making the AJAX call.
+
+Should use Node version 4+.
 
 ## License
  [BSD](/LICENSE)
