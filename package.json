@@ -4,7 +4,8 @@
   "description": "An application that allows you to search a list of slang words",
   "main": "app.js",
   "scripts": {
-    "start": "node app.js",
+    "start": "babel public/js/src -d public/js/lib | node app.js",
+    "build": "babel public/js/src -d public/js/lib",
     "test": "node node_modules/mocha/bin/mocha"
   },
   "author": "Nadim Rafehi",
@@ -14,6 +15,9 @@
     "express": "4.13.4"
   },
   "devDependencies": {
+    "babel-cli": "^6.11.4",
+    "babel-polyfill": "^6.13.0",
+    "babel-preset-es2015": "^6.13.2",
     "chai": "3.5.0",
     "mocha": "2.5.3"
   }
