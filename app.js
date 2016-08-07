@@ -12,8 +12,8 @@ app.get('/search/:word', (req, res) =>
 );
 
 function startServer() {
-    app.listen(3000, () =>
-        console.log('Urban Slang started on port 3000')
+    app.listen(8081, () =>
+        console.log('Urban Slang started on port 8081')
     );
 }
 
