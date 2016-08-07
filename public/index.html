@@ -4,25 +4,35 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Urban Slang</title>
+    <title>word pursuit</title>
+
+    <link href='https://fonts.googleapis.com/css?family=Marcellus' rel='stylesheet' type='text/css'>
 
     <link rel="stylesheet" href="css/bootstrap.min.css">
     <link rel="stylesheet" href="css/bootstrap-theme.min.css">
 
-<script>
-  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+    <link rel="stylesheet" href="font-awesome/css/font-awesome.min.css">
 
-  ga('create', 'UA-82098762-1', 'auto');
-  ga('send', 'pageview');
+    <script src="https://code.jquery.com/jquery-2.2.4.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
+    <script src="js/bootstrap.min.js"></script>
+    
+    <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
 
-</script>
+    ga('create', 'UA-82098762-1', 'auto');
+    ga('send', 'pageview');
+    </script>
 
 
     <style>
-        ul li {
+        h1 {
+            font-family: 'Marcellus', serif;
+        }
+
+        ul#results li {
             margin: 2px;
             background: #BBDEFB;
             padding: 5px;
@@ -30,12 +40,22 @@
             border-radius: 4px;
         }
 
-        ul li.notfound {
+        ul#results li.notfound {
             background: #E3F2FD;
         }
 
-        ul li:not(.notfound):hover {
+        ul#results li:not(.notfound):hover {
             background: #fff;
+        }
+
+        ul#results li a {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+
+        .list-inline {
+            margin-top: 9px;
         }
 
         p.filter {
@@ -45,6 +65,14 @@
             border: 1px solid #FDD835;
             border-radius: 4px;
         }
+
+        .searchspan {
+            float: right;
+            margin-right: 6px;
+            margin-top: -27px;
+            position: relative;
+            z-index: 2;
+        }
     </style>
 </head>
 
@@ -52,16 +80,30 @@
 
 <div class="container">
     <div class="row">
-        <div class="col-12"><h1>Urban Slang</h1></div>
+        <div class="col-md-12"><h1>word pursuits</h1><hr></div>
+        <div class="col-md-12">
+            <p>
+                <span style="font-family:'Marcellus'">word pursuit</span> provides a fast, clean interface
+                to find words beginning with certain characters.
+            </p>
+        </div>
     </div>
 
     <div class="row">
-        <form class="form-inline">
-            <div class="form-group">
-                <input id="searchTerm" type="text" class="form-control" onkeyup="findWords()" placeholder="enter search term">
-            </div>
-            <button type="button" class="btn btn-default" onclick="findWords()">Search</button>
-        </form>
+        <div class="col-md-4"></div>
+        <div class="col-md-3">
+            <input id="searchTerm" type="text" class="form-control" onkeyup="findWords()" placeholder="enter search term">
+            <span class="searchspan"><i class="fa fa-search fa-lg"></i></span>
+        </div>
+    </div>
+
+    <div id="initial-info" class="col-md-12">
+        <br>
+        <div class="well">
+            <p>Enter a search term to get started!</p>
+
+            <button class="btn btn-primary" onclick="exampleSearch()">Search for 'word'</button>
+        </div>
     </div>
 
     <div id="filteredIndicator" class="row hidden">
@@ -74,6 +116,35 @@
         <ul id="results" class="list-inline">
         </ul>
     </div>
+
+    
+    <div class="modal fade" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">Modal title</h4>
+                </div>
+                <div class="modal-body">
+                    <h5>Definitions</h5>
+                    <dl id="word-definitions"></dl>
+                    
+                    <div id="related-section">
+                        <h5>Related Definitions</h5>
+                        <dl id="related-definitions"></dl>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+    <!-- /.modal -->
+
+    
 </div>
 
 <script type="text/javascript">
@@ -90,8 +161,11 @@
         if (searchTerm.length === 0) {
             resultsList.innerHTML = '';
             filteredIndicator.classList.add('hidden');
+            $('#initial-info').show();
             return;
         }
+
+        $('#initial-info').hide();
 
         fetch('search/' + searchTerm, {
             method: 'get'
@@ -106,7 +180,7 @@
             resultsList.innerHTML = '<li class="notfound">no entries found</li>';
         } else {
             resultsList.innerHTML = responseJSON.results.sort().slice(0, 200).reduce(function(prev, curr) {
-                return prev += '<li>' + curr + '</li>';
+                return prev += `<li><a href="#" data-word="${curr}">${curr}</a></li>`;
             }, '');
 
             filteredIndicator.classList[responseJSON.results.length > 200 ? 'remove' : 'add']('hidden');
@@ -118,6 +192,55 @@
         console.error(e);
         alert('Something went wrong.');
     }
+
+    $('#results').on('click', 'a', e => {
+        showModal($(e.target).attr('data-word'));
+    });
+
+    const showModal = word => {
+        $('.modal h4').html(word);
+        $('.modal').modal('show');
+        getDefinitions(word);
+    }
+
+    var BASE_API_URL = 'http://api.pearson.com';
+
+    const getDefinitions = word => {
+        var $meaningsList = $('.modal #word-definitions').html('<div class="spinner" style="text-align: center"><i class="fa fa-spinner fa-2x fa-spin" aria-hidden="true"></i></div>');
+        var $relatedList = $('.modal #related-definitions').html('');
+        jQuery.get(`http://api.pearson.com/v2/dictionaries/ldoce5/entries?headword=${word}`)
+        .then(res => {
+            $meaningsList.find('.spinner').remove();
+            if (res.results.length == 0) {
+                $meaningsList.html('no definitions found');
+            }
+
+            for (var aWord of res.results.filter(e => e.part_of_speech && e.headword.startsWith(word.substring(0,2)) && !e.headword.includes(' ')).sort(wordSort)) {
+                var audioLink = '';
+                if (aWord.pronunciations) {
+                    console.log(aWord.pronunciations);
+                    aWord.pronunciations.forEach(p => audioLink += `<a href="#" onclick="playSound('${p.audio[0].url}')"> ${p.audio[0].lang.includes('British') ? 'GB' : 'US'}: <i class="fa fa-volume-up" aria-hidden="true"></i></a>`);
+                } 
+                // else if (aWord.senses && aWord.senses[0].examples && aWord.senses[0].examples[0].audio) {
+                //     audioLink = `<a href="#" onclick="playSound('${aWord.senses[0].examples[0].audio[0].url}')"><i class="fa fa-volume-up" aria-hidden="true"></i></a>`;
+                // }
+
+                console.log(JSON.stringify(aWord, null, ' '));
+
+                var definition = `<dt>${aWord.headword} (${aWord.part_of_speech}) ${audioLink}</dt><dd>${aWord.senses[0].definition} <!--a href="${BASE_API_URL + aWord.url}" target="_blank">(more)</a--></dd>`;
+                aWord.headword.toLowerCase() === word.toLowerCase() ? $meaningsList.append(definition) : $relatedList.append(definition);
+            }
+
+            $('.modal #related-section')[$relatedList.find('dt').length ? 'show' : 'hide']();
+        });
+    }
+
+    const exampleSearch = () => (searchInput.value = 'word') && findWords();
+
+    const wordSort = (a, b) => a.headword < b.headword ? -1 : (a.headword > b.headword ? 1 : 0);
+
+    const playSound = url => new Audio(BASE_API_URL + url).play();
+    
 </script>
 
 </body>
