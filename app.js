@@ -7,6 +7,10 @@ const urbanSlang = new UrbanSlang();
 
 app.use(express.static('public'));
 
+app.get('/about', (req, res) =>
+    res.sendFile(__dirname + '/public/about.html')
+);
+
 app.get('/search/:word', (req, res) =>
     res.send({ results: urbanSlang.retrieveWords(req.params.word) })
 );
