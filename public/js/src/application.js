@@ -20,7 +20,7 @@ function findWords() {
     jQuery.getJSON(`search/${searchTerm}`).then(function(response) {
         if (requestNumber != latestRequest) return;
         updateDisplay(response);
-    }).catch(errorOccurred);
+    });
 }
 
 function updateDisplay(responseJSON) {
@@ -49,6 +49,7 @@ const showModal = word => {
     $('.modal h4').html(word);
     $('.modal').modal('show');
     getDefinitions(word);
+    showScore(word);
 }
 
 var BASE_API_URL = 'http://api.pearson.com';
@@ -88,3 +89,9 @@ const exampleSearch = () => (searchInput.value = 'word') && findWords();
 const wordSort = (a, b) => a.headword < b.headword ? -1 : (a.headword > b.headword ? 1 : 0);
 
 const playSound = url => new Audio(BASE_API_URL + url).play();
+ 
+const scores = {};
+['eaionrtlsu', 'dg', 'bcmp', 'fhvwy', 'k', 'jx', 'qz'].forEach((letters, index) => letters.split('').forEach(l => scores[l] = index < 5 ? index+1 : (index == 5 ? 8 : 10)));
+const getScore = word => word.split('').reduce((p, c) => p + (scores[c] || 0), 0);
+
+const showScore = word => $('.modal #score').html(getScore(word));

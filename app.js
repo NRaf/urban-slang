@@ -2,7 +2,6 @@
 const UrbanSlang = require('./urban-slang');
 const express = require('express');
 const app = express();
-const expressHandlerbars = require('express-handlebars');
 const bodyParser = require('body-parser');
 const logger = require('./util/logger').getLogger('app');
 
@@ -13,11 +12,41 @@ app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
 
 app.use(express.static('public'));
 
-app.engine('handlebars', expressHandlerbars({defaultLayout: 'main'}));
+const expressHandlebars = require('express-handlebars').create({
+    defaultLayout: 'main',
+    helpers: {
+        eq: function (v1, v2) {
+            return v1 === v2;
+        },
+        ne: function (v1, v2) {
+            return v1 !== v2;
+        },
+        lt: function (v1, v2) {
+            return v1 < v2;
+        },
+        gt: function (v1, v2) {
+            return v1 > v2;
+        },
+        lte: function (v1, v2) {
+            return v1 <= v2;
+        },
+        gte: function (v1, v2) {
+            return v1 >= v2;
+        },
+        and: function (v1, v2) {
+            return v1 && v2;
+        },
+        or: function (v1, v2) {
+            return v1 || v2;
+        }
+    }
+});
+
+app.engine('handlebars', expressHandlebars.engine);
 app.set('view engine', 'handlebars');
 
 app.get('/', function (req, res) {
-    res.render('pages/index')
+    res.render('pages/home')
 });
 
 app.get('/contact', (req, res) =>
@@ -25,8 +54,9 @@ app.get('/contact', (req, res) =>
 );
 
 app.post('/contact', (req, res) => {
-    var aws = require('aws-sdk');
-    var ses = new aws.SES({apiVersion: '2010-12-01'});
+    var AWS = require('aws-sdk');
+    AWS.config.update({region: 'us-west-2'});
+    var ses = new AWS.SES({apiVersion: '2010-12-01'});
     var to = ['nedrafehi@gmail.com'];
     var from = 'info@wordpursuits.com';
 
@@ -56,11 +86,16 @@ app.post('/contact', (req, res) => {
             Destination: { ToAddresses: to },
             Message: {
                 Subject: {
-                    Data: `New email from wordpursuits.com ${req.body.subject}`,
+                    Data: `New email from wordpursuits.com: ${req.body.subject}`,
                 },
                 Body: {
                     Text: {
-                        Data: req.body.message,
+                        Data: 
+                        `
+                        ${req.body.name}, ${req.body.email} has sent you an email.
+                        Subject: ${req.body.subject}
+                        Body: ${req.body.message}
+                        `,
                     }
                 }
             }
@@ -77,11 +112,7 @@ app.post('/contact', (req, res) => {
 });
 
 app.get('/about', (req, res) =>
-    res.sendFile(__dirname + '/public/about.html')
-);
-
-app.get('/privacy', (req, res) =>
-    res.sendFile(__dirname + '/public/privacy.html')
+    res.render('pages/about')
 );
 
 app.get('/terms', (req, res) =>

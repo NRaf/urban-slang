@@ -22,7 +22,7 @@ function findWords() {
     jQuery.getJSON('search/' + searchTerm).then(function (response) {
         if (requestNumber != latestRequest) return;
         updateDisplay(response);
-    }).catch(errorOccurred);
+    });
 }
 
 function updateDisplay(responseJSON) {
@@ -51,6 +51,7 @@ var showModal = function showModal(word) {
     $('.modal h4').html(word);
     $('.modal').modal('show');
     getDefinitions(word);
+    showScore(word);
 };
 
 var BASE_API_URL = 'http://api.pearson.com';
@@ -119,4 +120,20 @@ var wordSort = function wordSort(a, b) {
 
 var playSound = function playSound(url) {
     return new Audio(BASE_API_URL + url).play();
+};
+
+var scores = {};
+['eaionrtlsu', 'dg', 'bcmp', 'fhvwy', 'k', 'jx', 'qz'].forEach(function (letters, index) {
+    return letters.split('').forEach(function (l) {
+        return scores[l] = index < 5 ? index + 1 : index == 5 ? 8 : 10;
+    });
+});
+var getScore = function getScore(word) {
+    return word.split('').reduce(function (p, c) {
+        return p + (scores[c] || 0);
+    }, 0);
+};
+
+var showScore = function showScore(word) {
+    return $('.modal #score').html(getScore(word));
 };

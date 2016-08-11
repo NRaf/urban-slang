@@ -1,0 +1,1 @@
+/* Hack to get JOI working with webpack */
