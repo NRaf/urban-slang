@@ -64,7 +64,7 @@ const getDefinitions = word => {
             $meaningsList.html('no definitions found');
         }
 
-        for (var aWord of res.results.filter(e => e.part_of_speech && e.headword.startsWith(word.substring(0,2)) && !e.headword.includes(' ')).sort(wordSort)) {
+        for (var aWord of res.results.filter(e => e.part_of_speech && e.headword.startsWith(word.substring(0,2)) && !e.headword.includes(' ')).sort((a, b) => Levenshtein(word, a.headword) - Levenshtein(word, b.headword))) {
             var audioLink = '';
             if (aWord.pronunciations) {
                 console.log(aWord.pronunciations);
@@ -85,8 +85,6 @@ const getDefinitions = word => {
 }
 
 const exampleSearch = () => (searchInput.value = 'word') && findWords();
-
-const wordSort = (a, b) => a.headword < b.headword ? -1 : (a.headword > b.headword ? 1 : 0);
 
 const playSound = url => new Audio(BASE_API_URL + url).play();
  

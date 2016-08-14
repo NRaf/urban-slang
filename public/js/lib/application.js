@@ -72,7 +72,9 @@ var getDefinitions = function getDefinitions(word) {
         try {
             for (var _iterator = res.results.filter(function (e) {
                 return e.part_of_speech && e.headword.startsWith(word.substring(0, 2)) && !e.headword.includes(' ');
-            }).sort(wordSort)[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+            }).sort(function (a, b) {
+                return Levenshtein(word, a.headword) - Levenshtein(word, b.headword);
+            })[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
                 var aWord = _step.value;
 
                 var audioLink = '';
@@ -112,10 +114,6 @@ var getDefinitions = function getDefinitions(word) {
 
 var exampleSearch = function exampleSearch() {
     return (searchInput.value = 'word') && findWords();
-};
-
-var wordSort = function wordSort(a, b) {
-    return a.headword < b.headword ? -1 : a.headword > b.headword ? 1 : 0;
 };
 
 var playSound = function playSound(url) {
