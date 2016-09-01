@@ -17,7 +17,7 @@ function findWords() {
 
     $('#initial-info').hide();
 
-    jQuery.getJSON(`search/${searchTerm}`).then(function(response) {
+    jQuery.getJSON(`/search/${searchTerm}`).then(function(response) {
         if (requestNumber != latestRequest) return;
         updateDisplay(response);
     });
@@ -45,9 +45,19 @@ $('#results').on('click', 'a', e => {
     showModal($(e.target).attr('data-word'));
 });
 
+$('body').on('click', 'a.inline-word', e => {
+    showModal($(e.target).attr('data-word'));
+    e.preventDefault();
+    return false;
+});
+
 const showModal = word => {
     $('.modal h4').html(word);
     $('.modal').modal('show');
+    loadWord(word);
+}
+
+const loadWord = word => {
     getDefinitions(word);
     showScore(word);
 }
@@ -55,8 +65,8 @@ const showModal = word => {
 var BASE_API_URL = 'http://api.pearson.com';
 
 const getDefinitions = word => {
-    var $meaningsList = $('.modal #word-definitions').html('<div class="spinner" style="text-align: center"><i class="fa fa-spinner fa-2x fa-spin" aria-hidden="true"></i></div>');
-    var $relatedList = $('.modal #related-definitions').html('');
+    var $meaningsList = $('#word-definitions').html('<div class="spinner" style="text-align: center"><i class="fa fa-spinner fa-2x fa-spin" aria-hidden="true"></i></div>');
+    var $relatedList = $('#related-definitions').html('');
     jQuery.get(`http://api.pearson.com/v2/dictionaries/ldoce5/entries?headword=${word}`)
     .then(res => {
         $meaningsList.find('.spinner').remove();
@@ -80,7 +90,9 @@ const getDefinitions = word => {
             aWord.headword.toLowerCase() === word.toLowerCase() ? $meaningsList.append(definition) : $relatedList.append(definition);
         }
 
-        $('.modal #related-section')[$relatedList.find('dt').length ? 'show' : 'hide']();
+        $('#related-section')[$relatedList.find('dt').length ? 'show' : 'hide']();
+
+        $('#view-word-details').attr('href', '/word/' + word);
     });
 }
 
@@ -91,5 +103,20 @@ const playSound = url => new Audio(BASE_API_URL + url).play();
 const scores = {};
 ['eaionrtlsu', 'dg', 'bcmp', 'fhvwy', 'k', 'jx', 'qz'].forEach((letters, index) => letters.split('').forEach(l => scores[l] = index < 5 ? index+1 : (index == 5 ? 8 : 10)));
 const getScore = word => word.split('').reduce((p, c) => p + (scores[c] || 0), 0);
+const createScrabbleTiles = word => word.split('').reduce(($el, c) => 
+    $el.append(createScrabbleTile(c, scores[c])), 
+    $('<div class="scrabble-word">')
+);
 
-const showScore = word => $('.modal #score').html(getScore(word));
+const createScrabbleTile = (letter, score) => $(`
+    <div class="scrabble-tile">
+        <div class="letter">${letter}</div>
+        <div class="score">${score}</div>
+    <div>`
+);
+
+const showScore = word => {
+    const $equalsTile = createScrabbleTile('=', '').addClass('equals');
+    const $scoreTile = createScrabbleTile(getScore(word), '');
+    $('#score').html(createScrabbleTiles(word).append($equalsTile).append($scoreTile));
+}

@@ -5,17 +5,17 @@
 
 <meta name="Description" CONTENT="quickly search and filter through all words in the dictionary">
 
-<link href='https://fonts.googleapis.com/css?family=Marcellus' rel='stylesheet' type='text/css'>
+<link href='https://fonts.googleapis.com/css?family=Marcellus|Gentium+Basic' rel='stylesheet' type='text/css'>
 
-<link rel="stylesheet" href="css/bootstrap.min.css">
-<link rel="stylesheet" href="css/bootstrap-theme.min.css">
+<link rel="stylesheet" href="/css/bootstrap.min.css">
+<link rel="stylesheet" href="/css/bootstrap-theme.min.css">
 
-<link rel="stylesheet" href="font-awesome/css/font-awesome.min.css">
+<link rel="stylesheet" href="/font-awesome/css/font-awesome.min.css">
 
 <script src="https://code.jquery.com/jquery-2.2.4.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
-<script src="js/vendor/bootstrap.min.js"></script>
-<script src="js/vendor/polyfill.min.js"></script>
-<script src="js/vendor/levenshtein.js"></script>
+<script src="/js/vendor/bootstrap.min.js"></script>
+<script src="/js/vendor/polyfill.min.js"></script>
+<script src="/js/vendor/levenshtein.js"></script>
 
 <script>
 (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
@@ -28,7 +28,7 @@ ga('send', 'pageview');
 </script>
 
 <style>
-    h1 {
+    h1, h2, h3 {
         font-family: 'Marcellus', serif;
     }
 
@@ -52,6 +52,13 @@ ga('send', 'pageview');
         display: block;
         width: 100%;
         height: 100%;
+    }
+
+    .inline-word {
+        background: #BBDEFB;
+        padding: 3px;
+        border: 1px solid #2196F3;
+        border-radius: 4px;
     }
 
     .list-inline {
@@ -91,5 +98,63 @@ ga('send', 'pageview');
         background-color: #f5f5f5;
         text-align: center;
     }
+
+    /* Start Wiktionary */
+    .IPA {
+        font-family: 'Gentium Basic', serif;
+    }
+
+    .NavContent {
+        display: none;
+    }
+    /* End Wiktionary */
+
+    /* Start Scrabble */
+    .letter {
+        text-align: center;
+        font-size: 2rem;
+        color: white;
+    }
+
+    .score {
+        display: inline-block;
+        float: right;
+        position: absolute;
+        top: 0px;
+        right: 3px;
+        margin-top: 0;
+        padding: 0;
+        font-size: 1.3rem;
+        color: white;
+    }
+
+    .scrabble-tile {
+        padding: 7px;
+        display: inline-block;
+        margin: 2px;
+        border-radius: 4px;
+        width: 40px;
+        position: relative;
+        box-shadow: 0px 5px 0px #b9a173;
+        border: 1px solid #ceb88f;
+        background: #eacda3; /* fallback for old browsers */
+        background: -webkit-linear-gradient(to left, #eacda3 , #d6ae7b); /* Chrome 10-25, Safari 5.1-6 */
+        background: linear-gradient(to left, #eacda3 , #d6ae7b); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+
+        background: -webkit-gradient(linear, left top, right top, color-stop(0%,rgba(233,223,196,1)), color-stop(1%,rgba(233,223,196,1)), color-stop(2%,rgba(237,227,200,1)), color-stop(24%,rgba(237,227,200,1)), color-stop(25%,rgba(235,221,195,1)), color-stop(48%,rgba(233,223,196,1)), color-stop(49%,rgba(235,221,195,1)), color-stop(52%,rgba(230,216,189,1)), color-stop(53%,rgba(230,216,189,1)), color-stop(54%,rgba(233,219,192,1)), color-stop(55%,rgba(230,216,189,1)), color-stop(56%,rgba(230,216,189,1)), color-stop(57%,rgba(233,219,192,1)), color-stop(58%,rgba(230,216,189,1)), color-stop(73%,rgba(230,216,189,1)), color-stop(74%,rgba(233,219,192,1)), color-stop(98%,rgba(233,219,192,1)), color-stop(100%,rgba(235,221,195,1)));
+
+        background: linear-gradient(left, rgba(233,223,196,1) 0%,rgba(233,223,196,1) 1%,rgba(237,227,200,1) 2%,rgba(237,227,200,1) 24%,rgba(235,221,195,1) 25%,rgba(233,223,196,1) 48%,rgba(235,221,195,1) 49%,rgba(230,216,189,1) 52%,rgba(230,216,189,1) 53%,rgba(233,219,192,1) 54%,rgba(230,216,189,1) 55%,rgba(230,216,189,1) 56%,rgba(233,219,192,1) 57%,rgba(230,216,189,1) 58%,rgba(230,216,189,1) 73%,rgba(233,219,192,1) 74%,rgba(233,219,192,1) 98%,rgba(235,221,195,1) 100%);
+    }
+
+    .scrabble-tile.equals {
+        box-shadow: 0px 0px white;
+        border: 0px;
+        background: white;
+    }
+
+    .scrabble-tile.equals .letter {
+        color: black;
+    }
+    /* End Scrabble */
 
 </style>

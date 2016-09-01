@@ -1,0 +1,61 @@
+
+<p>
+    <h2>{{word}}</h2>
+</p>
+
+<div id="filteredIndicator" class="row hidden">
+    <div>
+        <p class="filter bg-info">Item list filtered. Showing only 200 results.</p>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <ul class="nav nav-tabs">
+            <li role="presentation" {{#if (eq mode 'definition')}}class="active"{{/if}}><a href="/word/{{word}}">Definitions</a></li>
+            <li role="presentation" {{#if (eq mode 'rhyme')}}class="active"{{/if}}><a href="/word/{{word}}/rhymes">Rhymes</a></li>
+            <li role="presentation" {{#if (eq mode 'etymology')}}class="active"{{/if}}><a href="/word/{{word}}/etymology">Etymology</a></li>
+        </ul>
+
+        {{#if (eq mode 'definition')}}
+        <h5>Definitions</h5>
+        <dl id="word-definitions"></dl>
+        
+        <div id="related-section">
+            <h5>Related Definitions</h5>
+            <dl id="related-definitions"></dl>
+        </div>
+
+        <div id="scrabble-score-section">
+            <h5>Scrabble Score</h5>
+            <span id="score"></span>
+        </div>
+        {{/if}}
+
+        {{#if (eq mode 'rhyme')}}
+        <div id="rhymes-section">
+            <h5>Rhymes</h5>
+            <ul id="results" class="list-inline">
+                {{#each rhymes}}
+                <li><a href="#" data-word="{{this}}">{{this}}</a></li>
+                {{/each}}
+            </ul>
+        </div>
+        {{/if}}
+
+        {{#if (eq mode 'etymology')}}
+        <div id="rhymes-section">
+            <h5>Etymology</h5>
+            <div class="etymology">
+                {{{data}}}
+            </div>
+        </div>
+        {{/if}}
+    </div>
+</div>
+
+<script type="text/javascript">
+jQuery(document).ready(function() {
+    loadWord('{{word}}');
+});
+</script>

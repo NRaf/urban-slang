@@ -19,7 +19,7 @@ function findWords() {
 
     $('#initial-info').hide();
 
-    jQuery.getJSON('search/' + searchTerm).then(function (response) {
+    jQuery.getJSON('/search/' + searchTerm).then(function (response) {
         if (requestNumber != latestRequest) return;
         updateDisplay(response);
     });
@@ -47,9 +47,19 @@ $('#results').on('click', 'a', function (e) {
     showModal($(e.target).attr('data-word'));
 });
 
+$('body').on('click', 'a.inline-word', function (e) {
+    showModal($(e.target).attr('data-word'));
+    e.preventDefault();
+    return false;
+});
+
 var showModal = function showModal(word) {
     $('.modal h4').html(word);
     $('.modal').modal('show');
+    loadWord(word);
+};
+
+var loadWord = function loadWord(word) {
     getDefinitions(word);
     showScore(word);
 };
@@ -57,8 +67,8 @@ var showModal = function showModal(word) {
 var BASE_API_URL = 'http://api.pearson.com';
 
 var getDefinitions = function getDefinitions(word) {
-    var $meaningsList = $('.modal #word-definitions').html('<div class="spinner" style="text-align: center"><i class="fa fa-spinner fa-2x fa-spin" aria-hidden="true"></i></div>');
-    var $relatedList = $('.modal #related-definitions').html('');
+    var $meaningsList = $('#word-definitions').html('<div class="spinner" style="text-align: center"><i class="fa fa-spinner fa-2x fa-spin" aria-hidden="true"></i></div>');
+    var $relatedList = $('#related-definitions').html('');
     jQuery.get('http://api.pearson.com/v2/dictionaries/ldoce5/entries?headword=' + word).then(function (res) {
         $meaningsList.find('.spinner').remove();
         if (res.results.length == 0) {
@@ -108,7 +118,9 @@ var getDefinitions = function getDefinitions(word) {
             }
         }
 
-        $('.modal #related-section')[$relatedList.find('dt').length ? 'show' : 'hide']();
+        $('#related-section')[$relatedList.find('dt').length ? 'show' : 'hide']();
+
+        $('#view-word-details').attr('href', '/word/' + word);
     });
 };
 
@@ -131,7 +143,18 @@ var getScore = function getScore(word) {
         return p + (scores[c] || 0);
     }, 0);
 };
+var createScrabbleTiles = function createScrabbleTiles(word) {
+    return word.split('').reduce(function ($el, c) {
+        return $el.append(createScrabbleTile(c, scores[c]));
+    }, $('<div class="scrabble-word">'));
+};
+
+var createScrabbleTile = function createScrabbleTile(letter, score) {
+    return $('\n    <div class="scrabble-tile">\n        <div class="letter">' + letter + '</div>\n        <div class="score">' + score + '</div>\n    <div>');
+};
 
 var showScore = function showScore(word) {
-    return $('.modal #score').html(getScore(word));
+    var $equalsTile = createScrabbleTile('=', '').addClass('equals');
+    var $scoreTile = createScrabbleTile(getScore(word), '');
+    $('#score').html(createScrabbleTiles(word).append($equalsTile).append($scoreTile));
 };
