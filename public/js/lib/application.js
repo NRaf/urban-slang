@@ -61,7 +61,7 @@ var showModal = function showModal(word) {
 
 var loadWord = function loadWord(word) {
     getDefinitions(word);
-    showScore(word);
+    showScore(word.toLowerCase());
 };
 
 var BASE_API_URL = 'http://api.pearson.com';

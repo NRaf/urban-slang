@@ -82,9 +82,42 @@ app.get('/word/:word/etymology',  (req, res) => {
                 a.attribs.href = `https://en.wiktionary.org${a.attribs.href}`;
                 a.attribs.target = '_blank';
             }
-        })
-        res.render('pages/word', {word: req.params.word, data: $wiki.find('#English').parent('h2').nextUntil('h2'), mode: 'etymology'});
+        });
+
+        const etymogolies = $wikiBody.find('[id*=Etymology]').parent().next();
+        res.render('pages/word', {word: req.params.word, data: $wikiBody.find('[id*=Etymology]').parent().next(), mode: 'etymology'});
     }).catch(e => {
+        console.log(e);
+        res.render('pages/word', {word: req.params.word, data: `<h3>No etymology information found</h3>`, mode: 'etymology'});
+    });
+});
+
+app.get('/word/:word/wiki',  (req, res) => {
+    co(function*() {
+        logger.info(req.params.word);
+        var wikitionaryResult = yield rp.get({url: `https://en.wikipedia.org/w/index.php?title=${req.params.word}&printable=yes`, simple: true});
+
+        const $wiki = cheerio(wikitionaryResult);
+        const $wikiBody = $wiki;//.find('#English').parent('h2').nextUntil('h2');
+        $wikiBody.find('a').each((i, a) => {
+            try {
+                if (a.attribs.href.indexOf('://') < 0) {
+                    if (a.attribs.href.indexOf(':') < 0) {
+                        a.attribs.class = 'inline-word';
+                        a.attribs['data-word'] = a.attribs.href.replace('/wiki/', '').split('#')[0];
+                    }
+                    
+                    a.attribs.href = `https://en.wiktionary.org${a.attribs.href}`;
+                    a.attribs.target = '_blank';
+                }
+            } catch (e) {
+
+            }
+        });
+
+        res.render('pages/word', {word: req.params.word, url: `https://en.wikipedia.org/wiki/${req.params.word}`, mode: 'wiki'});
+    }).catch(e => {
+        console.log(e);
         res.render('pages/word', {word: req.params.word, data: `<h3>No etymology information found</h3>`, mode: 'etymology'});
     });
 });

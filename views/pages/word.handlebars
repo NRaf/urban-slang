@@ -15,6 +15,7 @@
             <li role="presentation" {{#if (eq mode 'definition')}}class="active"{{/if}}><a href="/word/{{word}}">Definitions</a></li>
             <li role="presentation" {{#if (eq mode 'rhyme')}}class="active"{{/if}}><a href="/word/{{word}}/rhymes">Rhymes</a></li>
             <li role="presentation" {{#if (eq mode 'etymology')}}class="active"{{/if}}><a href="/word/{{word}}/etymology">Etymology</a></li>
+            <li role="presentation" {{#if (eq mode 'wiki')}}class="active"{{/if}}><a href="/word/{{word}}/wiki">Wikipedia</a></li>
         </ul>
 
         {{#if (eq mode 'definition')}}
@@ -48,6 +49,17 @@
             <h5>Etymology</h5>
             <div class="etymology">
                 {{{data}}}
+
+                <sub>derived from <a href="https://en.wiktionary.org">Wiktionary</a>
+            </div>
+        </div>
+        {{/if}}
+
+        {{#if (eq mode 'wiki')}}
+        <div id="rhymes-section">
+            <sub>derived from <a href="https://en.wikipedia.org">Wikipedia</a></sub>
+            <div class="wiki">
+                <iframe src="{{url}}"></iframe>
             </div>
         </div>
         {{/if}}
