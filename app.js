@@ -49,12 +49,17 @@ const expressHandlebars = require('express-handlebars').create({
 app.engine('handlebars', expressHandlebars.engine);
 app.set('view engine', 'handlebars');
 
-app.get('/',  (req, res) => res.render('pages/home'));
+app.get('/',  (req, res) => {
+    logger.info('New visitor');
+    res.render('pages/home')
+});
 app.get('/word/:word',  (req, res) => {
+    logger.info('Search request for ' + req.params.word);
     res.render('pages/word', {word: req.params.word, mode: 'definition'});
 });
 
 app.get('/word/:word/rhymes',  (req, res) => {
+    logger.info('Rhyme request for ' + req.params.word);
     const getRhymes = word => {
         rp({uri: `https://api.datamuse.com/words?rel_rhy=${word}`, json: true})
             .then(rhymes => res.render('pages/word', {word, mode: 'rhyme', rhymes: rhymes.map(r => r.word)}))
@@ -66,8 +71,7 @@ app.get('/word/:word/rhymes',  (req, res) => {
 
 app.get('/word/:word/etymology',  (req, res) => {
     co(function*() {
-        logger.info(req.params.word);
-        logger.info(`https://en.wiktionary.org/w/index.php?title=${req.params.word}&printable=yes`);
+        logger.info('Etymology request for ' + req.params.word);
         var wikitionaryResult = yield rp.get({url: `https://en.wiktionary.org/w/index.php?title=${req.params.word}&printable=yes`, simple: true});
 
         const $wiki = cheerio(wikitionaryResult);
@@ -93,8 +97,8 @@ app.get('/word/:word/etymology',  (req, res) => {
 });
 
 app.get('/word/:word/wiki',  (req, res) => {
+    logger.info('Wikipedia request for ' + req.params.word);
     co(function*() {
-        logger.info(req.params.word);
         var wikitionaryResult = yield rp.get({url: `https://en.wikipedia.org/w/index.php?title=${req.params.word}&printable=yes`, simple: true});
 
         const $wiki = cheerio(wikitionaryResult);
@@ -190,9 +194,10 @@ app.get('/terms', (req, res) =>
     res.render('pages/terms')
 );
 
-app.get('/search/:word', (req, res) =>
+app.get('/search/:word', (req, res) => {
+    logger.info('Searching for ' + req.params.word);
     res.send({ results: urbanSlang.retrieveWords(req.params.word) })
-);
+});
 
 app.get('/rehab', (req, res) =>
     res.render('pages/rehab')

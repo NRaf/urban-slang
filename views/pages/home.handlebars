@@ -5,9 +5,13 @@
 
 <div class="row">
     <div class="col-md-4"></div>
-    <div class="col-md-3">
-        <input id="searchTerm" type="text" class="form-control" onkeyup="findWords()" placeholder="enter search term">
+    <div class="col-md-4">
+        <input id="searchTerm" type="text" class="form-control" onclick="hideStartIndicator()" onkeyup="findWords()" placeholder="enter search term">
         <span class="searchspan"><i class="fa fa-search fa-lg"></i></span>
+    </div>
+    <div id="start-indicator" class="col-md-12 text-center text-primary">
+        <i class="fa fa-arrow-up fa-5x pulse animated infinite"></i>
+        <h2 style="margin-top: 0">enter a word to get started!</h2>
     </div>
 </div>
 

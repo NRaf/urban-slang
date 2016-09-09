@@ -23,6 +23,10 @@ function findWords() {
     });
 }
 
+function hideStartIndicator() {
+    jQuery('#start-indicator').remove();
+}
+
 function updateDisplay(responseJSON) {
     if (responseJSON.results.length == 0) {
         resultsList.innerHTML = '<li class="notfound">no entries found</li>';
